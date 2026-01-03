@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import DishCard from './DishCard';
-import { Search, UtensilsCrossed } from 'lucide-react';
+import { Search, UtensilsCrossed, CheckCircle, XCircle } from 'lucide-react';
 
 const CATEGORIES = ['Starter', 'Main Course', 'Dessert', 'Classic'];
 
 const Home = () => {
-    const { menuData, loading, getSelectedCountByCategory, totalSelectedCount } = useCart();
+    const { menuData, loading, getSelectedCountByCategory, totalSelectedCount, toast } = useCart();
     const [activeTab, setActiveTab] = useState('Main Course');
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -68,6 +68,17 @@ const Home = () => {
                     </div>
                 </div>
             </header>
+
+            {toast && (
+                <div className="toast-container">
+                    <div className={`toast ${toast.type}`}>
+                        <span className="toast-icon">
+                            {toast.type === 'add' ? <CheckCircle size={20} color="#10b981" /> : <XCircle size={20} color="#ef4444" />}
+                        </span>
+                        <span className="toast-message">{toast.message}</span>
+                    </div>
+                </div>
+            )}
 
             <main className="dish-list">
                 {filteredDishes.length > 0 ? (

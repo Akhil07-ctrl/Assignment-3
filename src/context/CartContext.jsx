@@ -49,6 +49,14 @@ export const CartProvider = ({ children }) => {
     const [menuData, setMenuData] = useState([]);
     const [selectedDishes, setSelectedDishes] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [toast, setToast] = useState(null);
+
+    const showToast = useCallback((message, type) => {
+        setToast({ message, type });
+        setTimeout(() => {
+            setToast(null);
+        }, 3000);
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -105,12 +113,14 @@ export const CartProvider = ({ children }) => {
         setSelectedDishes((prev) => {
             const isSelected = prev.find((item) => item.id === dish.id);
             if (isSelected) {
+                showToast(`${dish.name} removed from selection`, 'remove');
                 return prev.filter((item) => item.id !== dish.id);
             } else {
+                showToast(`${dish.name} added to selection`, 'add');
                 return [...prev, dish];
             }
         });
-    }, []);
+    }, [showToast]);
 
     const getSelectedCountByCategory = useCallback((mealType) => {
         return selectedDishes.filter((dish) => dish.mealType.toUpperCase() === mealType.toUpperCase()).length;
@@ -124,8 +134,9 @@ export const CartProvider = ({ children }) => {
         selectedDishes,
         toggleDish,
         getSelectedCountByCategory,
-        totalSelectedCount
-    }), [menuData, loading, selectedDishes, toggleDish, getSelectedCountByCategory, totalSelectedCount]);
+        totalSelectedCount,
+        toast
+    }), [menuData, loading, selectedDishes, toggleDish, getSelectedCountByCategory, totalSelectedCount, toast]);
 
     return (
         <CartContext.Provider value={value}>
