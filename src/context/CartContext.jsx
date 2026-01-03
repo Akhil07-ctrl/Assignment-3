@@ -1,7 +1,42 @@
-import React, { createContext, useContext, useState, useMemo, useEffect } from 'react';
+import React, { createContext, useContext, useState, useMemo, useEffect, useCallback } from 'react';
 
 const CartContext = createContext();
 
+// Mock ingredients database
+const mockIngredientsDB = {
+    'Kadai Paneer': [
+        { name: 'Paneer', quantity: '200g' },
+        { name: 'Onion', quantity: '2 large' },
+        { name: 'Capsicum', quantity: '1 medium' },
+        { name: 'Tomato Puree', quantity: '1/2 cup' },
+        { name: 'Ginger Garlic Paste', quantity: '1 tbsp' },
+        { name: 'Kadai Masala', quantity: '2 tbsp' },
+        { name: 'Cream', quantity: '2 tbsp' },
+        { name: 'Coriander Leaves', quantity: 'for garnish' },
+    ],
+    'Butter Chicken': [
+        { name: 'Chicken', quantity: '500g' },
+        { name: 'Tomato Puree', quantity: '1 cup' },
+        { name: 'Butter', quantity: '50g' },
+        { name: 'Cream', quantity: '1/2 cup' },
+        { name: 'Kasuri Methi', quantity: '1 tsp' },
+    ],
+    'Gulab Jamun': [
+        { name: 'Khoya', quantity: '250g' },
+        { name: 'Paneer', quantity: '50g' },
+        { name: 'Sugar', quantity: '500g' },
+        { name: 'Cardamom', quantity: '4-5' },
+    ]
+};
+
+const dishImages = {
+    'STARTER': 'https://images.unsplash.com/photo-1601050690597-df056fb352ba?auto=format&fit=crop&w=800&q=80',
+    'MAIN COURSE': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&w=800&q=80',
+    'DESSERT': 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80',
+    'CLASSIC': 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80'
+};
+
+// eslint-disable-next-line react-refresh/only-export-components
 export const useCart = () => {
     const context = useContext(CartContext);
     if (!context) {
@@ -14,40 +49,6 @@ export const CartProvider = ({ children }) => {
     const [menuData, setMenuData] = useState([]);
     const [selectedDishes, setSelectedDishes] = useState([]);
     const [loading, setLoading] = useState(true);
-
-    // Mock ingredients database
-    const mockIngredientsDB = {
-        'Kadai Paneer': [
-            { name: 'Paneer', quantity: '200g' },
-            { name: 'Onion', quantity: '2 large' },
-            { name: 'Capsicum', quantity: '1 medium' },
-            { name: 'Tomato Puree', quantity: '1/2 cup' },
-            { name: 'Ginger Garlic Paste', quantity: '1 tbsp' },
-            { name: 'Kadai Masala', quantity: '2 tbsp' },
-            { name: 'Cream', quantity: '2 tbsp' },
-            { name: 'Coriander Leaves', quantity: 'for garnish' },
-        ],
-        'Butter Chicken': [
-            { name: 'Chicken', quantity: '500g' },
-            { name: 'Tomato Puree', quantity: '1 cup' },
-            { name: 'Butter', quantity: '50g' },
-            { name: 'Cream', quantity: '1/2 cup' },
-            { name: 'Kasuri Methi', quantity: '1 tsp' },
-        ],
-        'Gulab Jamun': [
-            { name: 'Khoya', quantity: '250g' },
-            { name: 'Paneer', quantity: '50g' },
-            { name: 'Sugar', quantity: '500g' },
-            { name: 'Cardamom', quantity: '4-5' },
-        ]
-    };
-
-    const dishImages = {
-        'STARTER': 'https://images.unsplash.com/photo-1601050690597-df056fb352ba?auto=format&fit=crop&w=800&q=80',
-        'MAIN COURSE': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&w=800&q=80',
-        'DESSERT': 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80',
-        'CLASSIC': 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80'
-    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -97,7 +98,7 @@ export const CartProvider = ({ children }) => {
         fetchData();
     }, []);
 
-    const toggleDish = (dish) => {
+    const toggleDish = useCallback((dish) => {
         setSelectedDishes((prev) => {
             const isSelected = prev.find((item) => item.id === dish.id);
             if (isSelected) {
@@ -106,11 +107,11 @@ export const CartProvider = ({ children }) => {
                 return [...prev, dish];
             }
         });
-    };
+    }, []);
 
-    const getSelectedCountByCategory = (mealType) => {
+    const getSelectedCountByCategory = useCallback((mealType) => {
         return selectedDishes.filter((dish) => dish.mealType.toUpperCase() === mealType.toUpperCase()).length;
-    };
+    }, [selectedDishes]);
 
     const totalSelectedCount = selectedDishes.length;
 
@@ -121,7 +122,7 @@ export const CartProvider = ({ children }) => {
         toggleDish,
         getSelectedCountByCategory,
         totalSelectedCount
-    }), [menuData, loading, selectedDishes]);
+    }), [menuData, loading, selectedDishes, toggleDish, getSelectedCountByCategory, totalSelectedCount]);
 
     return (
         <CartContext.Provider value={value}>
