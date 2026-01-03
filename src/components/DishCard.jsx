@@ -8,8 +8,12 @@ const DishCard = ({ dish }) => {
     const [isExpanded, setIsExpanded] = useState(false);
 
     const isSelected = selectedDishes.some((item) => item.id === dish.id);
-    const shortDescription = dish.description.substring(0, 80);
-    const needsExpansion = dish.description.length > 80;
+    
+    // Clean description: remove placeholder text like [MOCK_DATA_PLACEHOLDER]
+    const cleanDescription = dish.description.replace(/\[.*?\]/g, '').trim();
+    
+    const shortDescription = cleanDescription.substring(0, 80);
+    const needsExpansion = cleanDescription.length > 80;
 
     return (
         <div className={`dish-card ${isSelected ? 'selected' : ''}`}>
@@ -26,7 +30,7 @@ const DishCard = ({ dish }) => {
             <div className="dish-info">
                 <h3 className="dish-name">{dish.name}</h3>
                 <p className={`dish-description ${isExpanded ? 'expanded' : ''}`}>
-                    {isExpanded ? dish.description : `${shortDescription}${needsExpansion ? '...' : ''}`}
+                    {isExpanded ? cleanDescription : `${shortDescription}${needsExpansion ? '...' : ''}`}
                 </p>
                 <div className="card-actions">
                     {needsExpansion && (

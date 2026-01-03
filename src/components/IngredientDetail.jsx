@@ -21,6 +21,8 @@ const IngredientDetail = () => {
         </div>
     );
 
+    const cleanDescription = dish.description.replace(/\[.*?\]/g, '').trim();
+
     const ingredients = dish.ingredients || [
         { name: 'Oil', quantity: '2 tbsp' },
         { name: 'Salt', quantity: 'to taste' },
@@ -52,7 +54,7 @@ const IngredientDetail = () => {
 
                 <div className="dish-summary">
                     <h2>About</h2>
-                    <p className="description">{dish.description}</p>
+                    <p className="description">{cleanDescription}</p>
                 </div>
 
                 <section className="ingredients-section">
