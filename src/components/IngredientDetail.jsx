@@ -1,14 +1,27 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-import { ArrowLeft, ChefHat } from 'lucide-react';
+import { ArrowLeft, ChefHat, UtensilsCrossed } from 'lucide-react';
 
 const IngredientDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { menuData, loading } = useCart();
 
-    if (loading) return <div className="loading-screen">Loading...</div>;
+    if (loading) {
+        return (
+            <div className="loading-screen">
+                <div className="loader-container">
+                    <div className="loader-ring"></div>
+                    <div className="loader-ring"></div>
+                    <div className="loader-icon">
+                        <UtensilsCrossed size={48} />
+                    </div>
+                </div>
+                <div className="loading-text">Loading Details...</div>
+            </div>
+        );
+    }
 
     const dish = menuData.find((d) => d.id.toString() === id);
 

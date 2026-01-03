@@ -88,10 +88,13 @@ export const CartProvider = ({ children }) => {
                 });
 
                 setMenuData(enhancedData);
+                // Introduce a small delay to showcase the premium loading animation
+                setTimeout(() => {
+                    setLoading(false);
+                }, 2000);
             } catch (error) {
                 console.error("Error fetching menu:", error);
                 setMenuData([]);
-            } finally {
                 setLoading(false);
             }
         };

@@ -10,7 +10,20 @@ const Home = () => {
     const [activeTab, setActiveTab] = useState('Main Course');
     const [searchQuery, setSearchQuery] = useState('');
 
-    if (loading) return <div className="loading-screen">Loading Tasty Menu...</div>;
+    if (loading) {
+        return (
+            <div className="loading-screen">
+                <div className="loader-container">
+                    <div className="loader-ring"></div>
+                    <div className="loader-ring"></div>
+                    <div className="loader-icon">
+                        <UtensilsCrossed size={48} />
+                    </div>
+                </div>
+                <div className="loading-text">Preparing your menu...</div>
+            </div>
+        );
+    }
 
     const filteredDishes = menuData.filter((dish) => {
         const matchesTab = dish.mealType.toUpperCase() === activeTab.toUpperCase();
